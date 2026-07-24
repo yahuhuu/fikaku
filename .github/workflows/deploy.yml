@@ -1,0 +1,74 @@
+name: Deploy Fikaku
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: fikaku-production
+  cancel-in-progress: true
+
+jobs:
+  test-build-deploy:
+    name: Test, build, and deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        env:
+          DATABASE_URL: mysql://dummy:dummy@127.0.0.1:3306/fikaku
+        run: npx prisma generate
+
+      - name: Run tests
+        run: npm test
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Build
+        env:
+          DATABASE_URL: mysql://dummy:dummy@127.0.0.1:3306/fikaku
+          NEXTAUTH_URL: https://fikaku.fikyanggra.my.id
+          NEXTAUTH_SECRET: build-time-placeholder-secret-build-time-placeholder
+        run: npm run build
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.FIKAKU_VPS_SSH_KEY }}" > ~/.ssh/fikaku_deploy_key
+          chmod 600 ~/.ssh/fikaku_deploy_key
+          printf '%s\n' "${{ secrets.FIKAKU_VPS_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy on VPS
+        run: |
+          ssh -i ~/.ssh/fikaku_deploy_key \
+            -p "${{ secrets.FIKAKU_VPS_PORT }}" \
+            "${{ secrets.FIKAKU_VPS_USER }}@${{ secrets.FIKAKU_VPS_HOST }}" \
+            'set -euo pipefail
+              cd /home/ubuntu/workspace/fikaku
+              git fetch origin main
+              git reset --hard origin/main
+              npm ci
+              npx prisma generate
+              npm run build
+              sudo systemctl restart fikaku
+              sleep 2
+              sudo systemctl is-active --quiet fikaku
+              curl -fsS http://127.0.0.1:3000 >/dev/null
+            '
