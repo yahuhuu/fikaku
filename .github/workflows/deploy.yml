@@ -67,6 +67,7 @@ jobs:
             -p "${{ secrets.FIKAKU_VPS_PORT }}" \
             "${{ secrets.FIKAKU_VPS_USER }}@${{ secrets.FIKAKU_VPS_HOST }}" \
             'set -euo pipefail
+              export PATH=/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
               cd /home/ubuntu/workspace/fikaku
               git fetch origin main
               git reset --hard origin/main
