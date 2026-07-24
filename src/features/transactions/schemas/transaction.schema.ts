@@ -11,4 +11,4 @@ export const transactionSchema = z.object({
   date: z.coerce.date(),
 });
 
-export type TransactionInput = z.infer<typeof transactionSchema>;
+export type TransactionInput = z.input<typeof transactionSchema>;
