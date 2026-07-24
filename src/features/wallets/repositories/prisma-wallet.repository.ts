@@ -33,6 +33,20 @@ export const prismaWalletRepository: WalletRepository = {
     return wallets.map(toWalletListItem);
   },
 
+  async updateByUser(id, userId, data) {
+    const existing = await prisma.wallet.findFirst({ where: { id, userId }, select: { id: true } });
+    if (!existing) return null;
+    const wallet = await prisma.wallet.update({
+      where: { id },
+      data: {
+        name: data.name,
+        balance: data.balance,
+        currency: data.currency,
+      },
+    });
+    return toWalletListItem(wallet);
+  },
+
   async deleteByUser(id: string, userId: string): Promise<boolean> {
     const result = await prisma.wallet.deleteMany({ where: { id, userId } });
     return result.count > 0;

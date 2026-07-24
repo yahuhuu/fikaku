@@ -6,6 +6,8 @@ import { authOptions } from "@/shared/lib/auth";
 type PageProps = {
   searchParams: Promise<{
     created?: string;
+    deleted?: string;
+    updated?: string;
     error?: string;
   }>;
 };

@@ -85,6 +85,33 @@ export const prismaTransactionRepository: TransactionRepository = {
     return transactions.map(toTransactionListItem);
   },
 
+  async updateByUser(id, userId, data) {
+    const existing = await prisma.transaction.findFirst({
+      where: { id, userId },
+      select: { id: true },
+    });
+
+    if (!existing) return null;
+
+    const transaction = await prisma.transaction.update({
+      where: { id },
+      data: {
+        type: data.type,
+        amount: data.amount,
+        description: data.description,
+        date: data.date,
+        categoryId: data.categoryId,
+        walletId: data.walletId,
+      },
+      include: {
+        category: { select: { name: true } },
+        wallet: { select: { name: true } },
+      },
+    });
+
+    return toTransactionListItem(transaction);
+  },
+
   async deleteByUser(id: string, userId: string): Promise<boolean> {
     const result = await prisma.transaction.deleteMany({
       where: { id, userId },

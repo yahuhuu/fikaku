@@ -6,6 +6,8 @@ type CategoriesPageProps = {
   userId: string;
   searchParams?: {
     created?: string;
+    deleted?: string;
+    updated?: string;
     error?: string;
   };
 };
@@ -20,6 +22,8 @@ export async function CategoriesPage({ userId, searchParams }: CategoriesPagePro
         <p className="mt-2 max-w-2xl text-[#94a3b8]">Kelola kategori income/expense per user untuk memperjelas laporan keuangan.</p>
       </div>
       {searchParams?.created ? <p className="rounded-xl bg-[#e5fbff] px-4 py-3 text-sm font-medium text-[#53b6e0]">Kategori berhasil ditambahkan.</p> : null}
+      {searchParams?.updated ? <p className="rounded-xl bg-[#e5fbff] px-4 py-3 text-sm font-medium text-[#53b6e0]">Kategori berhasil diperbarui.</p> : null}
+      {searchParams?.deleted ? <p className="rounded-xl bg-[#e5fbff] px-4 py-3 text-sm font-medium text-[#53b6e0]">Kategori berhasil dihapus.</p> : null}
       {searchParams?.error ? <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">{searchParams.error}</p> : null}
       <CategoryForm />
       <CategoriesTable categories={categories} />

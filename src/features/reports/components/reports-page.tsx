@@ -1,6 +1,7 @@
 import { CategoryBreakdown } from "./category-breakdown";
 import { CashflowTable } from "./cashflow-table";
 import { ReportSummaryCards } from "./report-summary-cards";
+import { ReportCharts } from "./report-charts";
 import { getMonthlyReport } from "../queries/get-monthly-report.query";
 
 type ReportsPageProps = {
@@ -29,6 +30,7 @@ export async function ReportsPage({ userId, searchParams }: ReportsPageProps) {
       </div>
 
       <ReportSummaryCards summary={report.summary} />
+      <ReportCharts expenseByCategory={report.expenseByCategory} dailyCashflow={report.dailyCashflow} />
 
       <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <CategoryBreakdown items={report.expenseByCategory} />

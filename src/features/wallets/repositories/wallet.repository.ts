@@ -17,4 +17,5 @@ export type WalletRepository = {
   create(data: CreateWalletData): Promise<WalletListItem>;
   listByUser(userId: string): Promise<WalletListItem[]>;
   deleteByUser(id: string, userId: string): Promise<boolean>;
+  updateByUser(id: string, userId: string, data: Omit<CreateWalletData, "userId">): Promise<WalletListItem | null>;
 };

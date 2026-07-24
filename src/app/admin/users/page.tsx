@@ -1,13 +1,24 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { AdminPage } from "@/features/admin/components/admin-page";
+import { DashboardShell } from "@/shared/components/layout/dashboard-shell";
+import { authOptions } from "@/shared/lib/auth";
 
-export default function AdminUsersPage() {
+type PageProps = {
+  searchParams: Promise<{
+    updated?: string;
+    error?: string;
+  }>;
+};
+
+export default async function AdminUsersPage({ searchParams }: PageProps) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) redirect("/login");
+  if (session.user.role !== "ADMIN") redirect("/dashboard");
+
   return (
-    <main className="min-h-screen bg-white p-8 text-[#000000]">
-      <section className="mx-auto max-w-5xl space-y-6">
-        <Link className="font-black text-[#53b6e0]" href="/admin">← Admin</Link>
-        <h1 className="text-3xl font-bold">Users</h1>
-        <div className="rounded-2xl border border-[#e5e5e5] bg-white p-8 text-[#94a3b8]">User table scaffold. Hubungkan ke MySQL lewat Prisma repository setelah auth aktif.</div>
-      </section>
-    </main>
+    <DashboardShell>
+      <AdminPage searchParams={await searchParams} />
+    </DashboardShell>
   );
 }

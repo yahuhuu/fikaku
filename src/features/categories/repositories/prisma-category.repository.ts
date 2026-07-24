@@ -34,6 +34,21 @@ export const prismaCategoryRepository: CategoryRepository = {
     return categories.map(toCategoryListItem);
   },
 
+  async updateByUser(id, userId, data) {
+    const existing = await prisma.category.findFirst({ where: { id, userId }, select: { id: true } });
+    if (!existing) return null;
+    const category = await prisma.category.update({
+      where: { id },
+      data: {
+        name: data.name,
+        type: data.type,
+        color: data.color,
+        icon: data.icon,
+      },
+    });
+    return toCategoryListItem(category);
+  },
+
   async deleteByUser(id: string, userId: string): Promise<boolean> {
     const result = await prisma.category.deleteMany({ where: { id, userId } });
     return result.count > 0;

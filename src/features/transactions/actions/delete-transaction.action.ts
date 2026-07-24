@@ -21,4 +21,6 @@ export async function deleteTransactionAction(formData: FormData) {
 
   revalidatePath("/transactions");
   revalidatePath("/dashboard");
+  revalidatePath("/reports");
+  redirect("/transactions?deleted=1");
 }

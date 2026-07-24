@@ -11,7 +11,9 @@ type TransactionsPageProps = {
     month?: string;
     type?: string;
     created?: string;
+    deleted?: string;
     error?: string;
+    updated?: string;
   };
 };
 
@@ -40,6 +42,8 @@ export async function TransactionsPage({ userId, searchParams }: TransactionsPag
       </div>
 
       {searchParams?.created ? <p className="rounded-xl bg-[#e5fbff] px-4 py-3 text-sm font-medium text-[#53b6e0]">Transaksi berhasil ditambahkan.</p> : null}
+      {searchParams?.updated ? <p className="rounded-xl bg-[#e5fbff] px-4 py-3 text-sm font-medium text-[#53b6e0]">Transaksi berhasil diperbarui.</p> : null}
+      {searchParams?.deleted ? <p className="rounded-xl bg-[#e5fbff] px-4 py-3 text-sm font-medium text-[#53b6e0]">Transaksi berhasil dihapus.</p> : null}
       {searchParams?.error ? <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">{searchParams.error}</p> : null}
 
       <TransactionForm categories={categories} wallets={wallets} />
@@ -54,7 +58,7 @@ export async function TransactionsPage({ userId, searchParams }: TransactionsPag
         <button className="rounded-xl bg-[#111033] px-4 py-3 font-semibold text-white" type="submit">Filter</button>
       </form>
 
-      <TransactionsTable transactions={transactions} />
+      <TransactionsTable categories={categories} transactions={transactions} wallets={wallets} />
     </main>
   );
 }

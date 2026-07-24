@@ -21,4 +21,7 @@ export async function deleteCategoryAction(formData: FormData) {
 
   revalidatePath("/categories");
   revalidatePath("/transactions");
+  revalidatePath("/dashboard");
+  revalidatePath("/reports");
+  redirect("/categories?deleted=1");
 }

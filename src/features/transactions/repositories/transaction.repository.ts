@@ -29,8 +29,11 @@ export type ListTransactionsFilters = {
   type?: TransactionType;
 };
 
+export type UpdateTransactionData = Omit<CreateTransactionData, "userId">;
+
 export type TransactionRepository = {
   create(data: CreateTransactionData): Promise<TransactionListItem>;
   listByUser(filters: ListTransactionsFilters): Promise<TransactionListItem[]>;
   deleteByUser(id: string, userId: string): Promise<boolean>;
+  updateByUser(id: string, userId: string, data: UpdateTransactionData): Promise<TransactionListItem | null>;
 };

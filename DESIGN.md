@@ -263,3 +263,266 @@ Border:      #e5e5e5
 6. Add shadows for depth — use the extracted shadow values, not defaults
 7. Check responsive behavior — test mobile and tablet layouts
 8. Final pass — verify all colors match, spacing is consistent, fonts are correct
+
+## 10. Fikaku Application Shell Layout
+
+> Added after manual exploration of `https://antested.netlify.app/`. Use this as the default dashboard shell direction for Fikaku going forward.
+
+### Shell Structure
+
+The dashboard shell should be a fixed/near-fixed application frame with three main regions:
+
+```txt
+viewport
+├── sidebar/menu       fixed left
+├── header             top, right of sidebar
+└── content            below header, right of sidebar
+```
+
+Use a consistent shell gap of `16px` between major regions:
+
+```css
+--shell-gap: 16px;
+--sidebar-expanded: 272px;
+--sidebar-collapsed: 96px;
+--header-height: 64px;
+--shell-radius: 16px;
+```
+
+### Sidebar/Menu Geometry
+
+Expanded sidebar:
+
+```css
+.sidebar {
+  position: fixed;
+  inset-block: 0;
+  left: 0;
+  width: 272px;
+  padding: 32px;
+  border-radius: 0 16px 16px 0;
+  background: #0d0c27;
+  transition: width 220ms cubic-bezier(0.4, 0, 0.2, 1), padding 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+```
+
+Collapsed sidebar:
+
+```css
+.sidebar[data-collapsed="true"] {
+  width: 96px;
+  padding-inline: 24px;
+}
+```
+
+Important sidebar rules:
+
+- Sidebar touches the left, top, and bottom viewport edges.
+- Sidebar has no outer left margin.
+- Sidebar right side should be rounded (`16px`) to create a panel feel.
+- Expanded internal padding is `32px`.
+- Navigation item width in expanded mode is `224px` (`272px - 64px padding`).
+- Collapsed nav item width is `48px`, icon centered, text hidden.
+- Settings link should be anchored at the bottom using `margin-top: auto`.
+
+### Sidebar Header/Brand Row
+
+Expanded brand row:
+
+```txt
+x: 32px from viewport left
+ y: 32px from viewport top
+height: 32px
+logo: 32×32
+brand text: 20–22px, bold
+collapse button: 32×32, aligned right inside sidebar
+```
+
+Collapsed brand behavior:
+
+- Show logo only.
+- Hide brand text with opacity/width animation, not abrupt display jumps.
+- Move the collapse button below the logo or keep it aligned in the collapsed column.
+
+Recommended animation:
+
+```css
+.sidebar-label {
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 180ms ease, transform 180ms ease, width 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar[data-collapsed="true"] .sidebar-label {
+  width: 0;
+  opacity: 0;
+  transform: translateX(-8px);
+}
+```
+
+### Sidebar Navigation
+
+From the reference site:
+
+```txt
+MENU label top: around 88px from viewport top
+first nav item top: around 112px
+nav item height: 44px
+nav item gap: 4px
+nav item radius: 12px
+```
+
+Fikaku should use:
+
+```css
+.nav-section {
+  margin-top: 40px;
+}
+
+.nav-label {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.nav-item {
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-inline: 16px;
+  color: #94a3b8;
+  transition: background-color 200ms ease, color 200ms ease, padding 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item[data-active="true"] {
+  background: color-mix(in oklab, #53b6e0 10%, transparent);
+  color: #53b6e0;
+}
+
+.sidebar[data-collapsed="true"] .nav-item {
+  width: 48px;
+  justify-content: center;
+  padding-inline: 0;
+}
+```
+
+### Header Geometry
+
+Expanded sidebar mode:
+
+```css
+.header-shell {
+  position: sticky;
+  top: 16px;
+  margin-left: calc(272px + 16px);
+  margin-right: 16px;
+  height: 64px;
+  border-radius: 16px;
+  background: #0d0c27;
+}
+```
+
+Collapsed sidebar mode:
+
+```css
+.shell[data-sidebar="collapsed"] .header-shell {
+  margin-left: calc(96px + 16px);
+}
+```
+
+Important header rules:
+
+- Header top offset is `16px` from viewport top.
+- Header right offset is `16px` from viewport right.
+- Header starts `16px` after sidebar right edge.
+- Header height is `64px`.
+- Header border radius is `16px`.
+- Header content aligns to the right.
+- Icon buttons are `32×32`, circular, and spaced by `16px`.
+- Profile block sits at the far right and uses a `32px` avatar.
+
+### Main Content Geometry
+
+Expanded sidebar mode:
+
+```css
+.content-shell {
+  margin-left: calc(272px + 16px);
+  margin-right: 16px;
+  margin-top: 16px;
+  padding-right: 8px;
+}
+```
+
+Collapsed sidebar mode:
+
+```css
+.shell[data-sidebar="collapsed"] .content-shell {
+  margin-left: calc(96px + 16px);
+}
+```
+
+Important content rules:
+
+- Content starts below header: header top `16px` + height `64px` + gap `16px` = first content top around `96px`.
+- Content left aligns with header left.
+- Content width expands smoothly when sidebar collapses.
+- Content should scroll independently if needed, but shell spacing must remain stable.
+
+### Sidebar Collapse Interaction
+
+Behavior must match the reference style:
+
+- Collapse button lives in the sidebar near the top.
+- Expanded width: `272px`.
+- Collapsed width: `96px`.
+- Header and content move horizontally with the sidebar state.
+- Use smooth transition for sidebar width, header margin, content margin, nav text opacity, and nav item alignment.
+- Avoid instant `display: none` for labels during animation. Prefer `opacity`, `width`, `transform`, and `overflow: hidden`.
+- Store sidebar state in React state; optionally persist it in `localStorage`.
+
+Recommended React state shape:
+
+```tsx
+const [collapsed, setCollapsed] = useState(false);
+
+return (
+  <div data-sidebar={collapsed ? "collapsed" : "expanded"}>
+    <aside data-collapsed={collapsed}>
+      <button aria-label="Toggle sidebar" onClick={() => setCollapsed((value) => !value)} />
+    </aside>
+    <header />
+    <main />
+  </div>
+);
+```
+
+### Fikaku Adaptation
+
+The reference site uses a dark shell. Fikaku's global brand is light/white, but for dashboard shell layout we should borrow the structure and motion:
+
+- Keep Fikaku content/cards light unless explicitly moving to dark dashboard.
+- Sidebar/header may use either:
+  - dark panel `#0d0c27` for closer reference fidelity, or
+  - white panel with the same geometry if preserving light Fikaku style.
+- The most important requirement is geometry: sidebar touches left/top/bottom, header floats with top/right gaps, and content aligns with header after a `16px` gap.
+- Animation behavior should match the reference regardless of light/dark color choice.
+
+### Implementation Checklist for Fikaku Sidebar/Header
+
+- [ ] Use a client `DashboardShell` component for collapse state.
+- [ ] Sidebar expanded width `272px`, collapsed width `96px`.
+- [ ] Sidebar padding `32px` expanded, `24px` collapsed.
+- [ ] Header top/right gap `16px`.
+- [ ] Header/content left offset = sidebar width + `16px`.
+- [ ] Content top begins around `96px` from viewport top.
+- [ ] Nav items are `44px` high, `12px` radius.
+- [ ] Nav labels animate away smoothly on collapse.
+- [ ] Header/content margins transition using the same easing as sidebar.
+- [ ] Settings link anchored to bottom.

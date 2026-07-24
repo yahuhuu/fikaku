@@ -21,4 +21,7 @@ export async function deleteWalletAction(formData: FormData) {
 
   revalidatePath("/wallets");
   revalidatePath("/transactions");
+  revalidatePath("/dashboard");
+  revalidatePath("/reports");
+  redirect("/wallets?deleted=1");
 }

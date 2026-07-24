@@ -21,4 +21,5 @@ export type CategoryRepository = {
   create(data: CreateCategoryData): Promise<CategoryListItem>;
   listByUser(userId: string): Promise<CategoryListItem[]>;
   deleteByUser(id: string, userId: string): Promise<boolean>;
+  updateByUser(id: string, userId: string, data: Omit<CreateCategoryData, "userId">): Promise<CategoryListItem | null>;
 };

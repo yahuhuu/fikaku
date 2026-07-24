@@ -1,5 +1,5 @@
-import { calculateDashboardSummary } from "../services/calculate-dashboard-summary.service";
 import { prismaTransactionRepository } from "@/features/transactions/repositories/prisma-transaction.repository";
+import { buildDashboardInsights } from "../services/build-dashboard-insights.service";
 
 export async function getDashboardSummary(input: { userId: string; month?: string }) {
   const transactions = await prismaTransactionRepository.listByUser({
@@ -7,5 +7,5 @@ export async function getDashboardSummary(input: { userId: string; month?: strin
     month: input.month,
   });
 
-  return calculateDashboardSummary(transactions);
+  return buildDashboardInsights(transactions);
 }
