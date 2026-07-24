@@ -18,13 +18,13 @@ export async function ReportsPage({ userId, searchParams }: ReportsPageProps) {
     <main className="space-y-6">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-600">Monthly report</p>
-          <h1 className="mt-2 text-3xl font-bold text-slate-950">Reports</h1>
-          <p className="mt-2 max-w-2xl text-slate-600">Pantau ringkasan income, expense, breakdown kategori, dan cashflow harian.</p>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#53b6e0]">Monthly report</p>
+          <h1 className="mt-2 text-3xl font-bold text-[#000000]">Reports</h1>
+          <p className="mt-2 max-w-2xl text-[#94a3b8]">Pantau ringkasan income, expense, breakdown kategori, dan cashflow harian.</p>
         </div>
-        <form className="flex gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-          <input className="rounded-xl border border-slate-200 px-4 py-3 text-slate-900" defaultValue={selectedMonth} name="month" type="month" />
-          <button className="rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white" type="submit">Filter</button>
+        <form className="flex gap-3 rounded-2xl border border-[#e5e5e5] bg-white p-3 shadow-sm">
+          <input className="rounded-xl border border-[#e5e5e5] px-4 py-3 text-[#000000]" defaultValue={selectedMonth} name="month" type="month" />
+          <button className="rounded-xl bg-[#111033] px-4 py-3 font-semibold text-white" type="submit">Filter</button>
         </form>
       </div>
 

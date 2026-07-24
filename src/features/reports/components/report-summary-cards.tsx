@@ -7,16 +7,16 @@ type ReportSummaryCardsProps = {
 
 export function ReportSummaryCards({ summary }: ReportSummaryCardsProps) {
   const cards = [
-    { label: "Total income", value: summary.totalIncome, className: "text-emerald-600" },
+    { label: "Total income", value: summary.totalIncome, className: "text-[#53b6e0]" },
     { label: "Total expense", value: summary.totalExpense, className: "text-rose-600" },
-    { label: "Net cashflow", value: summary.netBalance, className: "text-slate-950" },
+    { label: "Net cashflow", value: summary.netBalance, className: "text-[#000000]" },
   ];
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
       {cards.map((card) => (
-        <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" key={card.label}>
-          <p className="text-sm text-slate-500">{card.label}</p>
+        <article className="rounded-2xl border border-[#e5e5e5] bg-white p-6 shadow-sm" key={card.label}>
+          <p className="text-sm text-[#94a3b8]">{card.label}</p>
           <p className={`mt-3 text-2xl font-black ${card.className}`}>{formatCurrency(card.value)}</p>
         </article>
       ))}

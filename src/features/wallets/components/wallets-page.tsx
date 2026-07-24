@@ -16,10 +16,10 @@ export async function WalletsPage({ userId, searchParams }: WalletsPageProps) {
   return (
     <main className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-slate-950">Wallets</h1>
-        <p className="mt-2 max-w-2xl text-slate-600">Kelola kas, bank, dan e-wallet sebagai sumber dana transaksi.</p>
+        <h1 className="text-3xl font-bold text-[#000000]">Wallets</h1>
+        <p className="mt-2 max-w-2xl text-[#94a3b8]">Kelola kas, bank, dan e-wallet sebagai sumber dana transaksi.</p>
       </div>
-      {searchParams?.created ? <p className="rounded-xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">Wallet berhasil ditambahkan.</p> : null}
+      {searchParams?.created ? <p className="rounded-xl bg-[#e5fbff] px-4 py-3 text-sm font-medium text-[#53b6e0]">Wallet berhasil ditambahkan.</p> : null}
       {searchParams?.error ? <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">{searchParams.error}</p> : null}
       <WalletForm />
       <WalletsGrid wallets={wallets} />

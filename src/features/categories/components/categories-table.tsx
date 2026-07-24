@@ -7,13 +7,13 @@ type CategoriesTableProps = {
 
 export function CategoriesTable({ categories }: CategoriesTableProps) {
   if (categories.length === 0) {
-    return <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">Belum ada kategori.</div>;
+    return <div className="rounded-2xl border border-dashed border-[#e5e5e5] bg-white p-10 text-center text-[#94a3b8]">Belum ada kategori.</div>;
   }
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-[#e5e5e5] bg-white shadow-sm">
       <table className="w-full text-left text-sm">
-        <thead className="bg-slate-50 text-slate-500">
+        <thead className="bg-white text-[#94a3b8]">
           <tr>
             <th className="p-4">Nama</th>
             <th>Tipe</th>
@@ -24,11 +24,11 @@ export function CategoriesTable({ categories }: CategoriesTableProps) {
         </thead>
         <tbody>
           {categories.map((category) => (
-            <tr className="border-t border-slate-100" key={category.id}>
-              <td className="p-4 font-medium text-slate-900">{category.name}</td>
-              <td><span className={category.type === "INCOME" ? "text-emerald-600" : "text-rose-600"}>{category.type}</span></td>
-              <td><span className="inline-flex items-center gap-2 text-slate-600"><span className="h-4 w-4 rounded-full border border-slate-200" style={{ backgroundColor: category.color ?? "#e2e8f0" }} />{category.color ?? "-"}</span></td>
-              <td className="text-slate-600">{category.icon ?? "-"}</td>
+            <tr className="border-t border-[#e5e5e5]" key={category.id}>
+              <td className="p-4 font-medium text-[#000000]">{category.name}</td>
+              <td><span className={category.type === "INCOME" ? "text-[#53b6e0]" : "text-rose-600"}>{category.type}</span></td>
+              <td><span className="inline-flex items-center gap-2 text-[#94a3b8]"><span className="h-4 w-4 rounded-full border border-[#e5e5e5]" style={{ backgroundColor: category.color ?? "#e2e8f0" }} />{category.color ?? "-"}</span></td>
+              <td className="text-[#94a3b8]">{category.icon ?? "-"}</td>
               <td className="pr-4 text-right">
                 <form action={deleteCategoryAction}>
                   <input name="id" type="hidden" value={category.id} />

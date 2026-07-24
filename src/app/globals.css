@@ -1,8 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #ffffff;
+  --foreground: #000000;
+  --color-primary: #53b6e0;
+  --color-secondary: #facc15;
+  --color-bg: #ffffff;
+  --color-bg-secondary: #e5fbff;
+  --color-text: #000000;
+  --color-text-secondary: #94a3b8;
+  --color-border: #e5e5e5;
+  --color-dark-surface: #0d0c27;
+  --color-dark-button: #111033;
+  --color-orange: #fb923c;
+  --color-pink: #ec4899;
+  --color-purple: #a855f7;
+  --shadow-card: 0 10px 30px rgba(83, 182, 224, 0.12);
+  --shadow-popover: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 @theme inline {
@@ -12,13 +26,67 @@
   --font-mono: var(--font-geist-mono);
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: ui-sans-serif, system-ui, sans-serif;
 }
 
-a { text-decoration: none; }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-geist-sans), Inter, ui-sans-serif, system-ui, sans-serif;
+  color: var(--color-text);
+}
+
+a {
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--color-secondary);
+  color: var(--color-text);
+}
+
+.ds-card {
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-bg);
+  box-shadow: var(--shadow-card);
+}
+
+.ds-surface {
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-bg-secondary);
+}
+
+.ds-input {
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  min-height: 44px;
+}
+
+.ds-button-primary {
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: #ffffff;
+  min-height: 44px;
+  box-shadow: 0 10px 24px rgba(83, 182, 224, 0.24);
+}
+
+.ds-button-ghost {
+  border-radius: 12px;
+  color: var(--color-text-secondary);
+  min-height: 44px;
+}
