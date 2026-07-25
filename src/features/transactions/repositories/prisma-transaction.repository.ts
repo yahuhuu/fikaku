@@ -7,7 +7,7 @@ import type {
   TransactionRepository,
 } from "./transaction.repository";
 
-function toTransactionListItem(transaction: {
+type PrismaTransactionWithRelations = {
   id: string;
   userId: string;
   type: "INCOME" | "EXPENSE";
@@ -16,9 +16,23 @@ function toTransactionListItem(transaction: {
   date: Date;
   categoryId: string | null;
   walletId: string | null;
+  familyId: string | null;
+  editedById: string | null;
+  editedAt: Date | null;
   category: { name: string } | null;
   wallet: { name: string } | null;
-}): TransactionListItem {
+  family: { name: string } | null;
+  editedBy: { name: string | null; email: string } | null;
+};
+
+const transactionInclude = {
+  category: { select: { name: true } },
+  wallet: { select: { name: true } },
+  family: { select: { name: true } },
+  editedBy: { select: { name: true, email: true } },
+};
+
+function toTransactionListItem(transaction: PrismaTransactionWithRelations): TransactionListItem {
   return {
     id: transaction.id,
     userId: transaction.userId,
@@ -28,6 +42,11 @@ function toTransactionListItem(transaction: {
     date: transaction.date,
     categoryId: transaction.categoryId,
     walletId: transaction.walletId,
+    familyId: transaction.familyId,
+    familyName: transaction.family?.name ?? null,
+    editedById: transaction.editedById,
+    editedByName: transaction.editedBy?.name ?? transaction.editedBy?.email ?? null,
+    editedAt: transaction.editedAt,
     categoryName: transaction.category?.name ?? null,
     walletName: transaction.wallet?.name ?? null,
   };
@@ -57,11 +76,9 @@ export const prismaTransactionRepository: TransactionRepository = {
         date: data.date,
         categoryId: data.categoryId,
         walletId: data.walletId,
+        familyId: data.familyId,
       },
-      include: {
-        category: { select: { name: true } },
-        wallet: { select: { name: true } },
-      },
+      include: transactionInclude,
     });
 
     return toTransactionListItem(transaction);
@@ -73,12 +90,25 @@ export const prismaTransactionRepository: TransactionRepository = {
       where: {
         userId: filters.userId,
         type: filters.type,
+        familyId: filters.familyId,
         date: monthRange,
       },
-      include: {
-        category: { select: { name: true } },
-        wallet: { select: { name: true } },
+      include: transactionInclude,
+      orderBy: [{ date: "desc" }, { createdAt: "desc" }],
+    });
+
+    return transactions.map(toTransactionListItem);
+  },
+
+  async listByFamily(filters) {
+    const monthRange = getMonthRange(filters.month);
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        familyId: filters.familyId,
+        type: filters.type,
+        date: monthRange,
       },
+      include: transactionInclude,
       orderBy: [{ date: "desc" }, { createdAt: "desc" }],
     });
 
@@ -102,21 +132,59 @@ export const prismaTransactionRepository: TransactionRepository = {
         date: data.date,
         categoryId: data.categoryId,
         walletId: data.walletId,
+        familyId: data.familyId,
+        editedById: data.editedById,
+        editedAt: data.editedById ? new Date() : undefined,
       },
-      include: {
-        category: { select: { name: true } },
-        wallet: { select: { name: true } },
-      },
+      include: transactionInclude,
     });
 
     return toTransactionListItem(transaction);
   },
 
-  async deleteByUser(id: string, userId: string): Promise<boolean> {
-    const result = await prisma.transaction.deleteMany({
-      where: { id, userId },
+  async updateByFamilyMember(id, familyId, data) {
+    const existing = await prisma.transaction.findFirst({
+      where: { id, familyId },
+      select: { id: true },
     });
 
+    if (!existing) return null;
+
+    const transaction = await prisma.transaction.update({
+      where: { id },
+      data: {
+        type: data.type,
+        amount: data.amount,
+        description: data.description,
+        date: data.date,
+        categoryId: data.categoryId,
+        walletId: data.walletId,
+        familyId: data.familyId,
+        editedById: data.editedById,
+        editedAt: data.editedById ? new Date() : undefined,
+      },
+      include: transactionInclude,
+    });
+
+    return toTransactionListItem(transaction);
+  },
+
+  async findById(id) {
+    const transaction = await prisma.transaction.findUnique({ where: { id }, include: transactionInclude });
+    return transaction ? toTransactionListItem(transaction) : null;
+  },
+
+  async deleteByUser(id: string, userId: string): Promise<boolean> {
+    const result = await prisma.transaction.deleteMany({
+      where: { id, userId, familyId: null },
+    });
+
+    return result.count > 0;
+  },
+
+  async deleteByFamilyPermission(id, familyId, _userId, canDelete) {
+    if (!canDelete) return false;
+    const result = await prisma.transaction.deleteMany({ where: { id, familyId } });
     return result.count > 0;
   },
 };

@@ -1,14 +1,41 @@
 import { describe, expect, it } from "vitest";
 import { updateTransaction } from "./update-transaction.service";
-import type { TransactionRepository } from "../repositories/transaction.repository";
+import type { TransactionListItem, TransactionRepository } from "../repositories/transaction.repository";
 
-function createRepository(): TransactionRepository {
+function createTransaction(overrides: Partial<TransactionListItem> = {}): TransactionListItem {
+  return {
+    id: "trx_1",
+    userId: "user_1",
+    type: "EXPENSE",
+    amount: 50000,
+    description: null,
+    date: new Date("2026-07-24"),
+    categoryId: null,
+    walletId: null,
+    familyId: null,
+    familyName: null,
+    editedById: null,
+    editedByName: null,
+    editedAt: null,
+    categoryName: null,
+    walletName: null,
+    ...overrides,
+  };
+}
+
+function createRepository(existing: TransactionListItem = createTransaction()): TransactionRepository {
   return {
     async create() { throw new Error("not used"); },
     async listByUser() { return []; },
+    async listByFamily() { return []; },
+    async findById() { return existing; },
     async deleteByUser() { return true; },
+    async deleteByFamilyPermission() { return true; },
+    async updateByFamilyMember(id, familyId, data) {
+      return createTransaction({ id, familyId, ...data, editedById: data.editedById ?? null, editedByName: "Editor", editedAt: new Date() });
+    },
     async updateByUser(id, userId, data) {
-      return {
+      return createTransaction({
         id,
         userId,
         type: data.type,
@@ -17,9 +44,8 @@ function createRepository(): TransactionRepository {
         date: data.date,
         categoryId: data.categoryId ?? null,
         walletId: data.walletId ?? null,
-        categoryName: null,
-        walletName: null,
-      };
+        familyId: data.familyId ?? null,
+      });
     },
   };
 }

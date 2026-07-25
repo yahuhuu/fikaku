@@ -511,7 +511,7 @@ The reference site uses a dark shell. Fikaku's global brand is light/white, but 
 - Sidebar/header may use either:
   - dark panel `#0d0c27` for closer reference fidelity, or
   - white panel with the same geometry if preserving light Fikaku style.
-- The most important requirement is geometry: sidebar touches left/top/bottom, header floats with top/right gaps, and content aligns with header after a `16px` gap.
+- The most important requirement is geometry: sidebar has `16px` inset from left/top/bottom, header floats with top/right gaps, and content aligns with header after a `16px` gap.
 - Animation behavior should match the reference regardless of light/dark color choice.
 
 ### Implementation Checklist for Fikaku Sidebar/Header
@@ -595,10 +595,25 @@ Mobile layout should feel like a first-class workspace, not only a scaled deskto
 
 - Header remains floating with 16px outer spacing.
 - Header shows current section title using route-derived labels.
-- Hamburger is fixed at top-left and opens a drawer.
-- Drawer must ignore desktop collapsed state: on mobile it always uses readable width and visible labels.
+- Mobile hamburger/menu icon is hidden; primary mobile movement uses bottom navigation.
+- Header is fixed on mobile so the current section remains visible while scrolling.
+- Drawer must ignore desktop collapsed state when it is opened: on mobile it always uses readable width and visible labels.
 - Drawer width should be constrained to `min(320px, calc(100vw - 32px))`.
+- Sidebar uses a 16px inset from left/top/bottom on desktop, matching the floating header spacing.
+- Header/content left offset should account for sidebar width plus the 16px sidebar inset and 16px gap (`sidebarWidth + 32px`).
 - Content bottom padding must leave space for mobile bottom navigation.
+
+### Family Feature Decisions
+
+- Users may belong to multiple families.
+- Family owners can add members by registered email only.
+- Family `transactionMode` options:
+  - `AUTO_FAMILY`: if it is the user's only family, new transactions automatically enter that family; when multiple families require family transactions, user picks the target family.
+  - `ALLOW_PERSONAL`: transaction form may include a Personal option.
+- Transaction ownership remains the creator `userId`; family visibility is tracked by nullable `familyId`.
+- Family report uses `familyId`; personal report uses the current user's transactions.
+- Family members may edit other family transactions; updates store `editedById` and `editedAt`.
+- Delete policy: creator can delete their own family transaction; family owner can delete any transaction in that family.
 
 ### Mobile Bottom Navigation
 

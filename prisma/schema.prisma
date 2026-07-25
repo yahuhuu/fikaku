@@ -14,10 +14,13 @@ model User {
   passwordHash String
   role         Role   @default(USER)
 
-  categories   Category[]
-  transactions Transaction[]
-  wallets      Wallet[]
-  subscription Subscription?
+  categories          Category[]
+  transactions        Transaction[]
+  wallets             Wallet[]
+  subscription        Subscription?
+  familyMemberships   FamilyMember[]
+  createdFamilies     Family[]      @relation("FamilyCreator")
+  editedTransactions  Transaction[] @relation("TransactionEditor")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -73,6 +76,13 @@ model Transaction {
   walletId String?
   wallet   Wallet? @relation(fields: [walletId], references: [id], onDelete: SetNull)
 
+  familyId String?
+  family   Family? @relation(fields: [familyId], references: [id], onDelete: SetNull)
+
+  editedById String?
+  editedBy   User?     @relation("TransactionEditor", fields: [editedById], references: [id], onDelete: SetNull)
+  editedAt   DateTime?
+
   type        TransactionType
   amount      Decimal         @db.Decimal(14, 2)
   description String?
@@ -84,8 +94,44 @@ model Transaction {
   @@index([userId])
   @@index([categoryId])
   @@index([walletId])
+  @@index([familyId])
+  @@index([editedById])
   @@index([date])
   @@map("transactions")
+}
+
+model Family {
+  id              String                @id @default(cuid())
+  name            String
+  transactionMode FamilyTransactionMode @default(AUTO_FAMILY)
+  createdById     String
+  createdBy       User                  @relation("FamilyCreator", fields: [createdById], references: [id], onDelete: Cascade)
+
+  members      FamilyMember[]
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdById])
+  @@map("families")
+}
+
+model FamilyMember {
+  id       String     @id @default(cuid())
+  familyId String
+  userId   String
+  role     FamilyRole @default(MEMBER)
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([familyId, userId])
+  @@index([userId])
+  @@map("family_members")
 }
 
 model Subscription {
@@ -113,6 +159,16 @@ enum Role {
 enum TransactionType {
   INCOME
   EXPENSE
+}
+
+enum FamilyRole {
+  OWNER
+  MEMBER
+}
+
+enum FamilyTransactionMode {
+  AUTO_FAMILY
+  ALLOW_PERSONAL
 }
 
 enum PlanType {

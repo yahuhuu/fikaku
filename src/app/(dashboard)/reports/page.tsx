@@ -6,6 +6,7 @@ import { authOptions } from "@/shared/lib/auth";
 type PageProps = {
   searchParams: Promise<{
     month?: string;
+    familyId?: string;
   }>;
 };
 

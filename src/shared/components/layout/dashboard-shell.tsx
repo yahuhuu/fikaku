@@ -10,13 +10,13 @@ import {
   CreditCard,
   FolderKanban,
   LayoutDashboard,
-  Menu,
   Moon,
   PieChart,
   Settings,
   Sun,
   Tags,
   UserCircle,
+  UsersRound,
   Wallet,
   X,
 } from "lucide-react";
@@ -27,15 +27,17 @@ import {
   type ThemeMode,
 } from "@/shared/theme/theme-preference";
 import { getNavigationTitle } from "@/shared/navigation/navigation-labels";
+import { getShellNavItems, type UserRole } from "@/shared/navigation/shell-navigation";
 
-const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Transactions", href: "/transactions", icon: CreditCard },
-  { label: "Categories", href: "/categories", icon: Tags },
-  { label: "Wallets", href: "/wallets", icon: Wallet },
-  { label: "Reports", href: "/reports", icon: PieChart },
-  { label: "Admin", href: "/admin", icon: FolderKanban },
-];
+const navIcons = {
+  "/dashboard": LayoutDashboard,
+  "/transactions": CreditCard,
+  "/categories": Tags,
+  "/wallets": Wallet,
+  "/families": UsersRound,
+  "/reports": PieChart,
+  "/admin": FolderKanban,
+};
 
 const bottomNavItems = [{ label: "Settings", href: "/settings", icon: Settings }];
 const mobileBottomNavItems = [
@@ -56,7 +58,7 @@ function getInitialTheme(): ThemeMode {
   return resolveStoredTheme(window.localStorage.getItem(THEME_STORAGE_KEY));
 }
 
-export function DashboardShell({ children }: { children: React.ReactNode }) {
+export function DashboardShell({ children, userRole }: { children: React.ReactNode; userRole: UserRole }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(getInitialCollapsed);
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
@@ -64,6 +66,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const sidebarWidth = collapsed ? 96 : 272;
   const isLight = theme === "light";
   const navigationTitle = getNavigationTitle(pathname);
+  const navItems = getShellNavItems(userRole);
 
   useEffect(() => {
     window.localStorage.setItem("fikaku-sidebar-collapsed", String(collapsed));
@@ -87,15 +90,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-[var(--shell-bg)] text-[var(--shell-text)] transition-colors duration-200" data-sidebar={collapsed ? "collapsed" : "expanded"} data-theme={theme}>
-      <button
-        aria-label="Open menu"
-        className="fixed left-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] text-[var(--shell-text)] shadow-[var(--shell-card-shadow)] md:hidden"
-        onClick={() => setMobileOpen(true)}
-        type="button"
-      >
-        <Menu className="h-5 w-5" />
-      </button>
-
       {mobileOpen ? (
         <button
           aria-label="Close mobile menu overlay"
@@ -106,7 +100,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       ) : null}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-[min(320px,calc(100vw-32px))] flex-col rounded-r-2xl border-r border-[var(--shell-border)] bg-[var(--shell-panel)] p-6 text-[var(--shell-text)] shadow-[var(--shell-card-shadow)] transition-[width,padding,transform,background-color,color,border-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:translate-x-0 ${
+        className={`fixed inset-y-4 left-4 z-50 flex w-[min(320px,calc(100vw-32px))] flex-col rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] p-6 text-[var(--shell-text)] shadow-[var(--shell-card-shadow)] transition-[width,padding,transform,background-color,color,border-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         } ${collapsed ? "md:w-24 md:px-6 md:py-8" : "md:w-[272px] md:p-8"}`}
         data-collapsed={collapsed}
@@ -150,7 +144,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           </p>
           <nav className="grid gap-1">
             {navItems.map((item) => {
-              const Icon = item.icon;
+              const Icon = navIcons[item.href as keyof typeof navIcons];
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <Link
@@ -201,10 +195,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <header
-        className="sticky top-4 z-30 ml-4 mr-4 flex h-16 items-center justify-between rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] px-6 text-[var(--shell-text)] shadow-[var(--shell-card-shadow)] transition-[margin-left,background-color,color,border-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:ml-[calc(var(--sidebar-width)+16px)]"
+        className="fixed inset-x-4 top-4 z-30 flex h-16 items-center justify-between rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] px-6 text-[var(--shell-text)] shadow-[var(--shell-card-shadow)] transition-[margin-left,background-color,color,border-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:sticky md:inset-x-auto md:ml-[calc(var(--sidebar-width)+32px)] md:mr-4"
         style={{ "--sidebar-width": `${sidebarWidth}px` } as React.CSSProperties}
       >
-        <div className="min-w-0 pl-10 md:hidden">
+        <div className="min-w-0 md:hidden">
           <p className="truncate text-sm font-semibold text-[var(--shell-text)]">{navigationTitle}</p>
           <p className="truncate text-xs text-[var(--shell-muted)]">Fikaku mobile workspace</p>
         </div>
@@ -236,7 +230,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       </header>
 
       <main
-        className="ml-4 mr-4 mt-4 pb-28 transition-[margin-left] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:ml-[calc(var(--sidebar-width)+16px)] md:pb-8"
+        className="ml-4 mr-4 mt-24 pb-28 transition-[margin-left] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:ml-[calc(var(--sidebar-width)+32px)] md:mt-4 md:pb-8"
         style={{ "--sidebar-width": `${sidebarWidth}px` } as React.CSSProperties}
       >
         <div className="rounded-2xl border border-[var(--shell-border)] bg-[var(--color-bg)] p-4 text-[var(--color-text)] shadow-[var(--shell-card-shadow)] transition-colors duration-200 md:p-6">{children}</div>

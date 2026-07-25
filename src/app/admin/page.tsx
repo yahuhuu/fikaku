@@ -17,7 +17,7 @@ export default async function Page({ searchParams }: PageProps) {
   if (session.user.role !== "ADMIN") redirect("/dashboard");
 
   return (
-    <DashboardShell>
+    <DashboardShell userRole={session.user.role}>
       <AdminPage searchParams={await searchParams} />
     </DashboardShell>
   );

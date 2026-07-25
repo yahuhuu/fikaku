@@ -5,6 +5,7 @@ describe("getNavigationTitle", () => {
   it("returns a readable title for known dashboard routes", () => {
     expect(getNavigationTitle("/dashboard")).toBe("Dashboard");
     expect(getNavigationTitle("/transactions/create")).toBe("Transactions");
+    expect(getNavigationTitle("/families")).toBe("Families");
     expect(getNavigationTitle("/admin/users")).toBe("Admin");
   });
 

@@ -1,3 +1,4 @@
+import type { FamilyListItem } from "@/features/families/repositories/family.repository";
 import { createTransactionAction } from "../actions/create-transaction.action";
 
 type Option = {
@@ -9,13 +10,34 @@ type Option = {
 type TransactionFormProps = {
   categories: Option[];
   wallets: Option[];
+  families: FamilyListItem[];
 };
 
-export function TransactionForm({ categories, wallets }: TransactionFormProps) {
+function canShowPersonalOption(families: FamilyListItem[]) {
+  if (families.length === 0) return false;
+  return families.some((family) => family.transactionMode === "ALLOW_PERSONAL");
+}
+
+export function TransactionForm({ categories, wallets, families }: TransactionFormProps) {
   const today = new Date().toISOString().slice(0, 10);
+  const showFamilySelector = families.length > 0;
+  const showPersonalOption = canShowPersonalOption(families);
+  const defaultFamilyId = families.length === 1 && families[0]?.transactionMode === "AUTO_FAMILY" ? families[0].id : (showPersonalOption ? "personal" : families[0]?.id);
 
   return (
     <form action={createTransactionAction} className="grid gap-4 rounded-2xl border border-[#e5e5e5] bg-white p-6 shadow-sm lg:grid-cols-6">
+      {showFamilySelector ? (
+        <div className="lg:col-span-6">
+          <label className="text-sm font-medium text-[#000000]" htmlFor="familyId">Simpan sebagai</label>
+          <select className="mt-2 w-full rounded-xl border border-[#e5e5e5] px-4 py-3 text-[#000000]" id="familyId" name="familyId" defaultValue={defaultFamilyId}>
+            {showPersonalOption ? <option value="personal">Pribadi</option> : null}
+            {families.map((family) => (
+              <option key={family.id} value={family.id}>{family.name} · {family.transactionMode === "AUTO_FAMILY" ? "semua masuk keluarga" : "boleh personal"}</option>
+            ))}
+          </select>
+          <p className="mt-2 text-xs text-[#94a3b8]">Mode ini mengikuti settings family. Jika semua family mewajibkan transaksi keluarga, opsi Pribadi tidak ditampilkan.</p>
+        </div>
+      ) : null}
       <div className="lg:col-span-1">
         <label className="text-sm font-medium text-[#000000]" htmlFor="type">Tipe</label>
         <select className="mt-2 w-full rounded-xl border border-[#e5e5e5] px-4 py-3 text-[#000000]" id="type" name="type" defaultValue="EXPENSE">
