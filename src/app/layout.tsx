@@ -10,10 +10,22 @@ export const metadata: Metadata = {
   description: "Kelola cashflow, wallet, kategori, dan laporan keuangan personal dalam satu SaaS.",
 };
 
+const themeScript = `
+try {
+  var theme = localStorage.getItem("fikaku-theme");
+  document.documentElement.dataset.theme = theme === "light" ? "light" : "dark";
+} catch (_) {
+  document.documentElement.dataset.theme = "dark";
+}
+`;
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="id" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-      <body>{children}</body>
+    <html lang="id" className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
+      <body>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {children}
+      </body>
     </html>
   );
 }

@@ -526,3 +526,63 @@ The reference site uses a dark shell. Fikaku's global brand is light/white, but 
 - [ ] Nav labels animate away smoothly on collapse.
 - [ ] Header/content margins transition using the same easing as sidebar.
 - [ ] Settings link anchored to bottom.
+
+## 11. Dark & Light Mode
+
+Fikaku supports two explicit theme modes: `dark` and `light`.
+
+### Storage and DOM Contract
+
+Use localStorage key:
+
+```txt
+fikaku-theme
+```
+
+Supported values:
+
+```txt
+dark
+light
+```
+
+Apply the theme to the root element:
+
+```html
+<html data-theme="dark">
+<html data-theme="light">
+```
+
+Default fallback is `dark`, because the dashboard shell is inspired by the dark `antested.netlify.app` layout.
+
+### Theme Tokens
+
+The app shell must read these CSS variables instead of hardcoded shell colors:
+
+```css
+--shell-bg
+--shell-panel
+--shell-panel-strong
+--shell-text
+--shell-muted
+--shell-border
+--shell-hover
+--shell-card-shadow
+--shell-overlay
+```
+
+Theme toggle button:
+
+- Lives in the header action group.
+- Uses `Sun` icon when current theme is dark, meaning “switch to light”.
+- Uses `Moon` icon when current theme is light, meaning “switch to dark”.
+- Persists the selected theme to `localStorage`.
+- Updates `document.documentElement.dataset.theme` immediately.
+
+### Implementation Rules
+
+- Avoid theme-specific duplicated JSX.
+- Prefer CSS variables and Tailwind arbitrary values like `bg-[var(--shell-panel)]`.
+- Keep transition smooth: `background-color`, `color`, and `border-color` should animate around `180ms–200ms`.
+- Avoid theme flash by injecting a small root script in `app/layout.tsx` before rendering children.
+- Legacy hardcoded classes such as `bg-white`, `text-[#000000]`, `border-[#e5e5e5]`, and `bg-[#e5fbff]` should be overridden in dark mode until components are fully tokenized.
