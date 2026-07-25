@@ -26,6 +26,7 @@ import {
   THEME_STORAGE_KEY,
   type ThemeMode,
 } from "@/shared/theme/theme-preference";
+import { getNavigationTitle } from "@/shared/navigation/navigation-labels";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -37,6 +38,13 @@ const navItems = [
 ];
 
 const bottomNavItems = [{ label: "Settings", href: "/settings", icon: Settings }];
+const mobileBottomNavItems = [
+  { label: "Home", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Transaksi", href: "/transactions", icon: CreditCard },
+  { label: "Wallet", href: "/wallets", icon: Wallet },
+  { label: "Reports", href: "/reports", icon: PieChart },
+  { label: "Settings", href: "/settings", icon: Settings },
+];
 
 function getInitialCollapsed() {
   if (typeof window === "undefined") return false;
@@ -55,6 +63,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const sidebarWidth = collapsed ? 96 : 272;
   const isLight = theme === "light";
+  const navigationTitle = getNavigationTitle(pathname);
 
   useEffect(() => {
     window.localStorage.setItem("fikaku-sidebar-collapsed", String(collapsed));
@@ -74,7 +83,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }
 
   const navBase = "flex h-11 items-center gap-3 rounded-xl text-sm font-medium transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]";
-  const navSize = collapsed ? "w-12 justify-center px-0" : "w-56 px-4";
+  const navSize = collapsed ? "w-full px-4 md:w-12 md:justify-center md:px-0" : "w-full px-4 md:w-56";
 
   return (
     <div className="min-h-screen bg-[var(--shell-bg)] text-[var(--shell-text)] transition-colors duration-200" data-sidebar={collapsed ? "collapsed" : "expanded"} data-theme={theme}>
@@ -97,17 +106,17 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       ) : null}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col rounded-r-2xl border-r border-[var(--shell-border)] bg-[var(--shell-panel)] text-[var(--shell-text)] shadow-[var(--shell-card-shadow)] transition-[width,padding,transform,background-color,color,border-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-[min(320px,calc(100vw-32px))] flex-col rounded-r-2xl border-r border-[var(--shell-border)] bg-[var(--shell-panel)] p-6 text-[var(--shell-text)] shadow-[var(--shell-card-shadow)] transition-[width,padding,transform,background-color,color,border-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        } ${collapsed ? "w-24 px-6 py-8" : "w-[272px] p-8"}`}
+        } ${collapsed ? "md:w-24 md:px-6 md:py-8" : "md:w-[272px] md:p-8"}`}
         data-collapsed={collapsed}
       >
-        <div className={`flex h-8 items-center ${collapsed ? "justify-center" : "justify-between"}`}>
+        <div className={`flex h-8 items-center ${collapsed ? "justify-between md:justify-center" : "justify-between"}`}>
           <Link className="flex items-center gap-3 overflow-hidden transition-opacity hover:opacity-80" href="/dashboard" onClick={() => setMobileOpen(false)}>
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#53b6e0] text-sm font-black text-white">F</span>
             <span
               className={`whitespace-nowrap text-[22px] font-black text-[var(--shell-text)] transition-[width,opacity,transform] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                collapsed ? "w-0 -translate-x-2 opacity-0" : "w-28 translate-x-0 opacity-100"
+                collapsed ? "w-28 translate-x-0 opacity-100 md:w-0 md:-translate-x-2 md:opacity-0" : "w-28 translate-x-0 opacity-100"
               }`}
             >
               fikaku
@@ -131,10 +140,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           </button>
         </div>
 
-        <div className={`${collapsed ? "mt-20" : "mt-10"}`}>
+        <div className={`${collapsed ? "mt-10 md:mt-20" : "mt-10"}`}>
           <p
             className={`mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--shell-muted)] transition-[opacity,transform] duration-200 ${
-              collapsed ? "-translate-x-2 opacity-0" : "translate-x-0 opacity-100"
+              collapsed ? "translate-x-0 opacity-100 md:-translate-x-2 md:opacity-0" : "translate-x-0 opacity-100"
             }`}
           >
             Menu
@@ -154,7 +163,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                   <Icon className="h-5 w-5 shrink-0" />
                   <span
                     className={`overflow-hidden whitespace-nowrap transition-[width,opacity,transform] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                      collapsed ? "w-0 -translate-x-2 opacity-0" : "w-36 translate-x-0 opacity-100"
+                      collapsed ? "w-36 translate-x-0 opacity-100 md:w-0 md:-translate-x-2 md:opacity-0" : "w-36 translate-x-0 opacity-100"
                     }`}
                   >
                     {item.label}
@@ -180,7 +189,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 <Icon className="h-5 w-5 shrink-0" />
                 <span
                   className={`overflow-hidden whitespace-nowrap transition-[width,opacity,transform] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                    collapsed ? "w-0 -translate-x-2 opacity-0" : "w-36 translate-x-0 opacity-100"
+                    collapsed ? "w-36 translate-x-0 opacity-100 md:w-0 md:-translate-x-2 md:opacity-0" : "w-36 translate-x-0 opacity-100"
                   }`}
                 >
                   {item.label}
@@ -195,6 +204,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         className="sticky top-4 z-30 ml-4 mr-4 flex h-16 items-center justify-between rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] px-6 text-[var(--shell-text)] shadow-[var(--shell-card-shadow)] transition-[margin-left,background-color,color,border-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:ml-[calc(var(--sidebar-width)+16px)]"
         style={{ "--sidebar-width": `${sidebarWidth}px` } as React.CSSProperties}
       >
+        <div className="min-w-0 pl-10 md:hidden">
+          <p className="truncate text-sm font-semibold text-[var(--shell-text)]">{navigationTitle}</p>
+          <p className="truncate text-xs text-[var(--shell-muted)]">Fikaku mobile workspace</p>
+        </div>
         <div className="hidden md:block">
           <p className="text-sm font-semibold text-[var(--shell-text)]">Personal Finance SaaS</p>
           <p className="text-xs text-[var(--shell-muted)]">Manage cashflow, wallets, categories, and reports.</p>
@@ -223,11 +236,28 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       </header>
 
       <main
-        className="ml-4 mr-4 mt-4 pb-8 transition-[margin-left] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:ml-[calc(var(--sidebar-width)+16px)]"
+        className="ml-4 mr-4 mt-4 pb-28 transition-[margin-left] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:ml-[calc(var(--sidebar-width)+16px)] md:pb-8"
         style={{ "--sidebar-width": `${sidebarWidth}px` } as React.CSSProperties}
       >
         <div className="rounded-2xl border border-[var(--shell-border)] bg-[var(--color-bg)] p-4 text-[var(--color-text)] shadow-[var(--shell-card-shadow)] transition-colors duration-200 md:p-6">{children}</div>
       </main>
+
+      <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] p-2 text-[var(--shell-muted)] shadow-[var(--shell-card-shadow)] md:hidden">
+        {mobileBottomNavItems.map((item) => {
+          const Icon = item.icon;
+          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          return (
+            <Link
+              className={`flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-semibold transition-colors ${active ? "bg-[#53b6e0]/10 text-[#53b6e0]" : "hover:bg-[var(--shell-hover)] hover:text-[var(--shell-text)]"}`}
+              href={item.href}
+              key={item.href}
+            >
+              <Icon className="h-4 w-4" />
+              <span className="max-w-full truncate">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 }

@@ -586,3 +586,43 @@ Theme toggle button:
 - Keep transition smooth: `background-color`, `color`, and `border-color` should animate around `180ms–200ms`.
 - Avoid theme flash by injecting a small root script in `app/layout.tsx` before rendering children.
 - Legacy hardcoded classes such as `bg-white`, `text-[#000000]`, `border-[#e5e5e5]`, and `bg-[#e5fbff]` should be overridden in dark mode until components are fully tokenized.
+
+## 12. Mobile UX Polish
+
+Mobile layout should feel like a first-class workspace, not only a scaled desktop shell.
+
+### Mobile Shell Rules
+
+- Header remains floating with 16px outer spacing.
+- Header shows current section title using route-derived labels.
+- Hamburger is fixed at top-left and opens a drawer.
+- Drawer must ignore desktop collapsed state: on mobile it always uses readable width and visible labels.
+- Drawer width should be constrained to `min(320px, calc(100vw - 32px))`.
+- Content bottom padding must leave space for mobile bottom navigation.
+
+### Mobile Bottom Navigation
+
+Use a fixed bottom navigation on mobile only:
+
+```txt
+Home
+Transaksi
+Wallet
+Reports
+Settings
+```
+
+Rules:
+
+- 5-column layout.
+- Minimum touch target around 48px.
+- Active item uses `#53b6e0` accent.
+- Hidden on `md` and larger screens.
+- Main content uses extra bottom padding (`pb-28`) so bottom nav does not cover forms/tables.
+
+### Mobile Charts
+
+- Use smaller card padding on mobile (`p-4`, `sm:p-6`).
+- Chart height should be around `h-64` on mobile, `h-72` on larger screens.
+- Axis labels should use smaller font around `10px`.
+- Avoid horizontal overflow; root/body should hide accidental x-overflow.
