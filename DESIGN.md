@@ -595,10 +595,8 @@ Mobile layout should feel like a first-class workspace, not only a scaled deskto
 
 - Header remains floating with 16px outer spacing.
 - Header shows current section title using route-derived labels.
-- Mobile hamburger/menu icon is hidden; primary mobile movement uses bottom navigation.
+- Mobile sidebar is fully hidden; primary mobile movement uses bottom navigation.
 - Header is fixed on mobile so the current section remains visible while scrolling.
-- Drawer must ignore desktop collapsed state when it is opened: on mobile it always uses readable width and visible labels.
-- Drawer width should be constrained to `min(320px, calc(100vw - 32px))`.
 - Sidebar uses a 16px inset from left/top/bottom on desktop, matching the floating header spacing.
 - Header/content left offset should account for sidebar width plus the 16px sidebar inset and 16px gap (`sidebarWidth + 32px`).
 - Content bottom padding must leave space for mobile bottom navigation.
@@ -614,6 +612,9 @@ Mobile layout should feel like a first-class workspace, not only a scaled deskto
 - Family report uses `familyId`; personal report uses the current user's transactions.
 - Family members may edit other family transactions; updates store `editedById` and `editedAt`.
 - Delete policy: creator can delete their own family transaction; family owner can delete any transaction in that family.
+- Family owner can delete a family; existing transactions are detached from that family report.
+- Family page separates settings, add-member form, and danger-zone delete action.
+- Transaction amount inputs use a client-side Rupiah mask (`Rp. 1.000.000`) while submitting plain numeric values.
 
 ### Mobile Bottom Navigation
 
@@ -623,13 +624,14 @@ Use a fixed bottom navigation on mobile only:
 Home
 Transaksi
 Wallet
+Family
 Reports
 Settings
 ```
 
 Rules:
 
-- 5-column layout.
+- 6-column layout.
 - Minimum touch target around 48px.
 - Active item uses `#53b6e0` accent.
 - Hidden on `md` and larger screens.

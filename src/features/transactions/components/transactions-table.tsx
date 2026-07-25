@@ -5,6 +5,7 @@ import type { FamilyListItem } from "@/features/families/repositories/family.rep
 import { formatCurrency } from "@/shared/utils/format-currency";
 import { formatDate } from "@/shared/utils/format-date";
 import { ConfirmSubmitButton } from "@/shared/components/forms/confirm-submit-button";
+import { RupiahAmountInput } from "./rupiah-amount-input";
 
 type Option = {
   id: string;
@@ -49,10 +50,16 @@ export function TransactionsTable({ categories, families, transactions, wallets 
                   <option value="EXPENSE">Expense</option>
                 </select>
               </div>
-              <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[#94a3b8]">Amount</label>
-                <input className="mt-1 w-full rounded-xl border border-[#e5e5e5] px-3 py-2 text-[#000000]" defaultValue={transaction.amount} min="1" name="amount" type="number" />
-              </div>
+              <RupiahAmountInput
+                containerClassName=""
+                defaultValue={transaction.amount}
+                id={`amount-${transaction.id}`}
+                inputClassName="mt-1 w-full rounded-xl border border-[#e5e5e5] px-3 py-2 text-[#000000]"
+                label="Amount"
+                labelClassName="text-xs font-semibold uppercase tracking-[0.12em] text-[#94a3b8]"
+                name="amount"
+                required
+              />
               <div>
                 <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[#94a3b8]">Tanggal</label>
                 <input className="mt-1 w-full rounded-xl border border-[#e5e5e5] px-3 py-2 text-[#000000]" defaultValue={transaction.date.toISOString().slice(0, 10)} name="date" type="date" />

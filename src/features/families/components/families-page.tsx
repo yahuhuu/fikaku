@@ -1,11 +1,13 @@
 import { addFamilyMemberAction } from "../actions/add-family-member.action";
 import { createFamilyAction } from "../actions/create-family.action";
+import { deleteFamilyAction } from "../actions/delete-family.action";
 import { updateFamilySettingsAction } from "../actions/update-family-settings.action";
+import { ConfirmSubmitButton } from "@/shared/components/forms/confirm-submit-button";
 import { getFamilies } from "../queries/get-families.query";
 
 type FamiliesPageProps = {
   userId: string;
-  searchParams?: { created?: string; updated?: string; memberAdded?: string; error?: string };
+  searchParams?: { created?: string; updated?: string; memberAdded?: string; deleted?: string; error?: string };
 };
 
 const modeLabels = {
@@ -27,6 +29,7 @@ export async function FamiliesPage({ userId, searchParams }: FamiliesPageProps) 
       {searchParams?.created ? <p className="rounded-xl bg-[#e5fbff] px-4 py-3 text-sm font-medium text-[#53b6e0]">Family berhasil dibuat.</p> : null}
       {searchParams?.updated ? <p className="rounded-xl bg-[#e5fbff] px-4 py-3 text-sm font-medium text-[#53b6e0]">Settings family berhasil diperbarui.</p> : null}
       {searchParams?.memberAdded ? <p className="rounded-xl bg-[#e5fbff] px-4 py-3 text-sm font-medium text-[#53b6e0]">Member berhasil ditambahkan.</p> : null}
+      {searchParams?.deleted ? <p className="rounded-xl bg-[#e5fbff] px-4 py-3 text-sm font-medium text-[#53b6e0]">Family berhasil dihapus.</p> : null}
       {searchParams?.error ? <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">{searchParams.error}</p> : null}
 
       <form action={createFamilyAction} className="grid gap-4 rounded-2xl border border-[#e5e5e5] bg-white p-6 shadow-sm lg:grid-cols-[1fr_1fr_auto] lg:items-end">
@@ -61,23 +64,36 @@ export async function FamiliesPage({ userId, searchParams }: FamiliesPageProps) 
             </div>
 
             {family.role === "OWNER" ? (
-              <details className="mt-5 rounded-2xl bg-[#e5fbff] p-4">
-                <summary className="cursor-pointer font-semibold text-[#000000]">Settings & tambah member</summary>
-                <form action={updateFamilySettingsAction} className="mt-4 grid gap-3">
+              <div className="mt-5 grid gap-4">
+                <details className="rounded-2xl bg-[#e5fbff] p-4">
+                  <summary className="cursor-pointer font-semibold text-[#000000]">Settings family</summary>
+                  <form action={updateFamilySettingsAction} className="mt-4 grid gap-3">
+                    <input name="familyId" type="hidden" value={family.id} />
+                    <input className="rounded-xl border border-[#e5e5e5] px-4 py-3 text-[#000000]" name="name" defaultValue={family.name} required />
+                    <select className="rounded-xl border border-[#e5e5e5] px-4 py-3 text-[#000000]" name="transactionMode" defaultValue={family.transactionMode}>
+                      <option value="AUTO_FAMILY">Semua transaksi masuk keluarga</option>
+                      <option value="ALLOW_PERSONAL">Bisa pilih personal atau keluarga</option>
+                    </select>
+                    <button className="rounded-xl bg-[#111033] px-4 py-3 font-semibold text-white" type="submit">Simpan settings</button>
+                  </form>
+                </details>
+
+                <details className="rounded-2xl bg-[#e5fbff] p-4">
+                  <summary className="cursor-pointer font-semibold text-[#000000]">Tambah member</summary>
+                  <form action={addFamilyMemberAction} className="mt-4 grid gap-3 md:grid-cols-[1fr_auto]">
+                    <input name="familyId" type="hidden" value={family.id} />
+                    <input className="rounded-xl border border-[#e5e5e5] px-4 py-3 text-[#000000]" name="email" placeholder="email user terdaftar" required type="email" />
+                    <button className="rounded-xl bg-[#53b6e0] px-4 py-3 font-semibold text-white" type="submit">Tambah member</button>
+                  </form>
+                </details>
+
+                <form action={deleteFamilyAction} className="rounded-2xl border border-rose-200 bg-rose-50 p-4">
                   <input name="familyId" type="hidden" value={family.id} />
-                  <input className="rounded-xl border border-[#e5e5e5] px-4 py-3 text-[#000000]" name="name" defaultValue={family.name} required />
-                  <select className="rounded-xl border border-[#e5e5e5] px-4 py-3 text-[#000000]" name="transactionMode" defaultValue={family.transactionMode}>
-                    <option value="AUTO_FAMILY">Semua transaksi masuk keluarga</option>
-                    <option value="ALLOW_PERSONAL">Bisa pilih personal atau keluarga</option>
-                  </select>
-                  <button className="rounded-xl bg-[#111033] px-4 py-3 font-semibold text-white" type="submit">Simpan settings</button>
+                  <p className="font-semibold text-rose-700">Danger zone</p>
+                  <p className="mt-1 text-sm text-rose-600">Hapus family akan melepas transaksi dari laporan family ini.</p>
+                  <ConfirmSubmitButton className="mt-3 rounded-xl px-4 py-3 text-sm font-semibold text-rose-700 hover:bg-rose-100 disabled:opacity-60" confirmMessage={`Hapus family ${family.name}?`}>Hapus family</ConfirmSubmitButton>
                 </form>
-                <form action={addFamilyMemberAction} className="mt-4 grid gap-3 md:grid-cols-[1fr_auto]">
-                  <input name="familyId" type="hidden" value={family.id} />
-                  <input className="rounded-xl border border-[#e5e5e5] px-4 py-3 text-[#000000]" name="email" placeholder="email user terdaftar" required type="email" />
-                  <button className="rounded-xl bg-[#53b6e0] px-4 py-3 font-semibold text-white" type="submit">Tambah member</button>
-                </form>
-              </details>
+              </div>
             ) : null}
 
             <div className="mt-5 space-y-3">

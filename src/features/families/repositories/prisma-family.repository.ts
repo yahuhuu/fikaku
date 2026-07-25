@@ -138,6 +138,17 @@ export const prismaFamilyRepository: FamilyRepository = {
     };
   },
 
+  async deleteByOwner(data): Promise<boolean> {
+    const owner = await prisma.familyMember.findFirst({
+      where: { familyId: data.familyId, userId: data.userId, role: "OWNER" },
+      select: { id: true },
+    });
+    if (!owner) return false;
+
+    await prisma.family.delete({ where: { id: data.familyId } });
+    return true;
+  },
+
   async isMember(data): Promise<boolean> {
     const member = await prisma.familyMember.findUnique({
       where: { familyId_userId: { familyId: data.familyId, userId: data.userId } },

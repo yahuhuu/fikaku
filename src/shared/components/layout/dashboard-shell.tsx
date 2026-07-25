@@ -18,7 +18,6 @@ import {
   UserCircle,
   UsersRound,
   Wallet,
-  X,
 } from "lucide-react";
 import {
   getNextTheme,
@@ -44,6 +43,7 @@ const mobileBottomNavItems = [
   { label: "Home", href: "/dashboard", icon: LayoutDashboard },
   { label: "Transaksi", href: "/transactions", icon: CreditCard },
   { label: "Wallet", href: "/wallets", icon: Wallet },
+  { label: "Family", href: "/families", icon: UsersRound },
   { label: "Reports", href: "/reports", icon: PieChart },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
@@ -62,7 +62,6 @@ export function DashboardShell({ children, userRole }: { children: React.ReactNo
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(getInitialCollapsed);
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const sidebarWidth = collapsed ? 96 : 272;
   const isLight = theme === "light";
   const navigationTitle = getNavigationTitle(pathname);
@@ -90,23 +89,12 @@ export function DashboardShell({ children, userRole }: { children: React.ReactNo
 
   return (
     <div className="min-h-screen bg-[var(--shell-bg)] text-[var(--shell-text)] transition-colors duration-200" data-sidebar={collapsed ? "collapsed" : "expanded"} data-theme={theme}>
-      {mobileOpen ? (
-        <button
-          aria-label="Close mobile menu overlay"
-          className="fixed inset-0 z-40 bg-[var(--shell-overlay)] md:hidden"
-          onClick={() => setMobileOpen(false)}
-          type="button"
-        />
-      ) : null}
-
       <aside
-        className={`fixed inset-y-4 left-4 z-50 flex w-[min(320px,calc(100vw-32px))] flex-col rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] p-6 text-[var(--shell-text)] shadow-[var(--shell-card-shadow)] transition-[width,padding,transform,background-color,color,border-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:translate-x-0 ${
-          mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        } ${collapsed ? "md:w-24 md:px-6 md:py-8" : "md:w-[272px] md:p-8"}`}
+        className={`fixed inset-y-4 left-4 z-50 hidden flex-col rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] text-[var(--shell-text)] shadow-[var(--shell-card-shadow)] transition-[width,padding,background-color,color,border-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:flex ${collapsed ? "md:w-24 md:px-6 md:py-8" : "md:w-[272px] md:p-8"}`}
         data-collapsed={collapsed}
       >
         <div className={`flex h-8 items-center ${collapsed ? "justify-between md:justify-center" : "justify-between"}`}>
-          <Link className="flex items-center gap-3 overflow-hidden transition-opacity hover:opacity-80" href="/dashboard" onClick={() => setMobileOpen(false)}>
+          <Link className="flex items-center gap-3 overflow-hidden transition-opacity hover:opacity-80" href="/dashboard">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#53b6e0] text-sm font-black text-white">F</span>
             <span
               className={`whitespace-nowrap text-[22px] font-black text-[var(--shell-text)] transition-[width,opacity,transform] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ${
@@ -123,14 +111,6 @@ export function DashboardShell({ children, userRole }: { children: React.ReactNo
             type="button"
           >
             {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
-          </button>
-          <button
-            aria-label="Close menu"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[var(--shell-muted)] transition-colors hover:bg-[var(--shell-hover)] hover:text-[#53b6e0] md:hidden"
-            onClick={() => setMobileOpen(false)}
-            type="button"
-          >
-            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -151,7 +131,6 @@ export function DashboardShell({ children, userRole }: { children: React.ReactNo
                   className={`${navBase} ${navSize} ${active ? "bg-[#53b6e0]/10 text-[#53b6e0]" : "text-[var(--shell-muted)] hover:bg-[var(--shell-hover)] hover:text-[var(--shell-text)]"}`}
                   href={item.href}
                   key={item.href}
-                  onClick={() => setMobileOpen(false)}
                   title={collapsed ? item.label : undefined}
                 >
                   <Icon className="h-5 w-5 shrink-0" />
@@ -177,7 +156,6 @@ export function DashboardShell({ children, userRole }: { children: React.ReactNo
                 className={`${navBase} ${navSize} ${active ? "bg-[#53b6e0]/10 text-[#53b6e0]" : "text-[var(--shell-muted)] hover:bg-[var(--shell-hover)] hover:text-[var(--shell-text)]"}`}
                 href={item.href}
                 key={item.href}
-                onClick={() => setMobileOpen(false)}
                 title={collapsed ? item.label : undefined}
               >
                 <Icon className="h-5 w-5 shrink-0" />
@@ -219,7 +197,7 @@ export function DashboardShell({ children, userRole }: { children: React.ReactNo
           <button className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--shell-panel-strong)] text-[var(--shell-muted)] transition-colors hover:text-[#53b6e0]" type="button" aria-label="Notifications">
             <Bell className="h-4 w-4" />
           </button>
-          <Link className="flex items-center gap-3 transition-opacity hover:opacity-80" href="/settings" onClick={() => setMobileOpen(false)}>
+          <Link className="flex items-center gap-3 transition-opacity hover:opacity-80" href="/settings">
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#53b6e0] text-white"><UserCircle className="h-5 w-5" /></span>
             <span className="hidden text-left sm:block">
               <span className="block text-sm font-semibold text-[var(--shell-text)]">Fikaku User</span>
@@ -236,7 +214,7 @@ export function DashboardShell({ children, userRole }: { children: React.ReactNo
         <div className="rounded-2xl border border-[var(--shell-border)] bg-[var(--color-bg)] p-4 text-[var(--color-text)] shadow-[var(--shell-card-shadow)] transition-colors duration-200 md:p-6">{children}</div>
       </main>
 
-      <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] p-2 text-[var(--shell-muted)] shadow-[var(--shell-card-shadow)] md:hidden">
+      <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-6 rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] p-2 text-[var(--shell-muted)] shadow-[var(--shell-card-shadow)] md:hidden">
         {mobileBottomNavItems.map((item) => {
           const Icon = item.icon;
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`);

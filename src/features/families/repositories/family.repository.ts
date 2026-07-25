@@ -29,6 +29,7 @@ export type FamilyRepository = {
   listForUser(userId: string): Promise<FamilyDetail[]>;
   addMemberByEmail(data: { familyId: string; ownerId: string; email: string }): Promise<AddFamilyMemberResult>;
   updateSettings(data: UpdateFamilySettingsData): Promise<FamilyListItem | null>;
+  deleteByOwner(data: { familyId: string; userId: string }): Promise<boolean>;
   isMember(data: { familyId: string; userId: string }): Promise<boolean>;
   canEditFamilyTransaction(data: { familyId: string; userId: string }): Promise<boolean>;
   canDeleteFamilyTransaction(data: { familyId: string; transactionOwnerId: string; userId: string }): Promise<boolean>;

@@ -10,6 +10,7 @@ function createRepository(): FamilyRepository {
     async addMemberByEmail() { return { ok: false, error: "unused" }; },
     async listForUser() { return []; },
     async updateSettings() { return null; },
+    async deleteByOwner() { return false; },
     async isMember() { return false; },
     async canEditFamilyTransaction() { return false; },
     async canDeleteFamilyTransaction() { return false; },

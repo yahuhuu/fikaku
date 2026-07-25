@@ -1,5 +1,6 @@
 import type { FamilyListItem } from "@/features/families/repositories/family.repository";
 import { createTransactionAction } from "../actions/create-transaction.action";
+import { RupiahAmountInput } from "./rupiah-amount-input";
 
 type Option = {
   id: string;
@@ -45,10 +46,7 @@ export function TransactionForm({ categories, wallets, families }: TransactionFo
           <option value="INCOME">Income</option>
         </select>
       </div>
-      <div className="lg:col-span-1">
-        <label className="text-sm font-medium text-[#000000]" htmlFor="amount">Amount</label>
-        <input className="mt-2 w-full rounded-xl border border-[#e5e5e5] px-4 py-3 text-[#000000]" id="amount" min="1" name="amount" placeholder="125000" required type="number" />
-      </div>
+      <RupiahAmountInput id="amount" label="Amount" name="amount" required />
       <div className="lg:col-span-1">
         <label className="text-sm font-medium text-[#000000]" htmlFor="date">Tanggal</label>
         <input className="mt-2 w-full rounded-xl border border-[#e5e5e5] px-4 py-3 text-[#000000]" defaultValue={today} id="date" name="date" required type="date" />

@@ -4,7 +4,7 @@ import { FamiliesPage } from "@/features/families/components/families-page";
 import { authOptions } from "@/shared/lib/auth";
 
 type PageProps = {
-  searchParams: Promise<{ created?: string; updated?: string; memberAdded?: string; error?: string }>;
+  searchParams: Promise<{ created?: string; updated?: string; memberAdded?: string; deleted?: string; error?: string }>;
 };
 
 export default async function Page({ searchParams }: PageProps) {
