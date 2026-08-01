@@ -6,6 +6,7 @@ const navigationTitles = [
   { prefix: "/families", title: "Families" },
   { prefix: "/reports", title: "Reports" },
   { prefix: "/settings", title: "Settings" },
+  { prefix: "/subscriptions", title: "Subscriptions" },
   { prefix: "/admin", title: "Admin" },
 ];
 

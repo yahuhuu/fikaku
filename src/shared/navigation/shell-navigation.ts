@@ -6,16 +6,29 @@ export type ShellNavItem = {
   adminOnly?: boolean;
 };
 
-export const shellNavItems = [
+export const mainShellNavItems = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Transactions", href: "/transactions" },
-  { label: "Categories", href: "/categories" },
   { label: "Wallets", href: "/wallets" },
-  { label: "Families", href: "/families" },
   { label: "Reports", href: "/reports" },
-  { label: "Admin", href: "/admin", adminOnly: true },
+] satisfies ShellNavItem[];
+
+export const settingsShellNavItems = [
+  { label: "Profile", href: "/settings" },
+  { label: "Categories", href: "/categories" },
+  { label: "Families", href: "/families" },
+  { label: "Subscriptions", href: "/subscriptions" },
 ] satisfies ShellNavItem[];
 
 export function getShellNavItems(role: UserRole) {
-  return shellNavItems.filter((item) => !item.adminOnly || role === "ADMIN");
+  void role;
+  return mainShellNavItems;
+}
+
+export function getSettingsNavItems() {
+  return settingsShellNavItems;
+}
+
+export function isSettingsMenuPath(pathname: string) {
+  return ["/settings", "/categories", "/families", "/subscriptions"].some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }

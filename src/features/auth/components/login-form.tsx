@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 
@@ -50,6 +51,14 @@ export function LoginForm({ registered, callbackUrl = "/dashboard" }: LoginFormP
       <button className="w-full rounded-xl bg-[#53b6e0] px-4 py-3 font-semibold text-white hover:bg-[#3aa6d4] disabled:cursor-not-allowed disabled:bg-[#e5e5e5]" disabled={isPending} type="submit">
         {isPending ? "Memproses login..." : "Masuk ke dashboard"}
       </button>
+      <div className="hidden space-y-2 border-t border-[#e5e5e5] pt-4 text-center text-sm text-[#94a3b8] md:block">
+        <p>
+          <Link className="font-semibold text-[#53b6e0] hover:underline" href="/forgot-password">Lupa password?</Link>
+        </p>
+        <p>
+          Belum punya akun? <Link className="font-semibold text-[#53b6e0] hover:underline" href="/register">Daftar sekarang</Link>
+        </p>
+      </div>
     </form>
   );
 }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { registerAction } from "../actions/register.action";
 
 export function RegisterForm() {
@@ -16,6 +17,9 @@ export function RegisterForm() {
         <input className="mt-2 w-full rounded-xl border border-[#e5e5e5] px-4 py-3 text-[#000000] outline-none ring-emerald-500 focus:ring-2" id="password" minLength={8} name="password" placeholder="minimal 8 karakter" required type="password" />
       </div>
       <button className="w-full rounded-xl bg-[#53b6e0] px-4 py-3 font-semibold text-white hover:bg-[#3aa6d4]" type="submit">Buat akun</button>
+      <p className="hidden border-t border-[#e5e5e5] pt-4 text-center text-sm text-[#94a3b8] md:block">
+        Sudah punya akun? <Link className="font-semibold text-[#53b6e0] hover:underline" href="/login">Login sekarang</Link>
+      </p>
     </form>
   );
 }

@@ -597,8 +597,11 @@ Mobile layout should feel like a first-class workspace, not only a scaled deskto
 - Header shows current section title using route-derived labels.
 - Mobile sidebar is fully hidden; primary mobile movement uses bottom navigation.
 - Header is fixed on mobile so the current section remains visible while scrolling.
+- On desktop, header and sidebar are fixed; only the main content panel scrolls.
 - Sidebar uses a 16px inset from left/top/bottom on desktop, matching the floating header spacing.
 - Header/content left offset should account for sidebar width plus the 16px sidebar inset and 16px gap (`sidebarWidth + 32px`).
+- Header/content vertical gap should match the sidebar-to-content horizontal gap (`16px`).
+- Content panel should align to the sidebar bottom edge on desktop.
 - Content bottom padding must leave space for mobile bottom navigation.
 
 ### Family Feature Decisions

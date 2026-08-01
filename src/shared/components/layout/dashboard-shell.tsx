@@ -26,7 +26,7 @@ import {
   type ThemeMode,
 } from "@/shared/theme/theme-preference";
 import { getNavigationTitle } from "@/shared/navigation/navigation-labels";
-import { getShellNavItems, type UserRole } from "@/shared/navigation/shell-navigation";
+import { getSettingsNavItems, getShellNavItems, isSettingsMenuPath, type UserRole } from "@/shared/navigation/shell-navigation";
 
 const navIcons = {
   "/dashboard": LayoutDashboard,
@@ -34,6 +34,8 @@ const navIcons = {
   "/categories": Tags,
   "/wallets": Wallet,
   "/families": UsersRound,
+  "/settings": Settings,
+  "/subscriptions": CreditCard,
   "/reports": PieChart,
   "/admin": FolderKanban,
 };
@@ -65,7 +67,8 @@ export function DashboardShell({ children, userRole }: { children: React.ReactNo
   const sidebarWidth = collapsed ? 96 : 272;
   const isLight = theme === "light";
   const navigationTitle = getNavigationTitle(pathname);
-  const navItems = getShellNavItems(userRole);
+  const isSettingsMenu = isSettingsMenuPath(pathname);
+  const navItems = isSettingsMenu ? getSettingsNavItems() : getShellNavItems(userRole);
 
   useEffect(() => {
     window.localStorage.setItem("fikaku-sidebar-collapsed", String(collapsed));
@@ -88,12 +91,12 @@ export function DashboardShell({ children, userRole }: { children: React.ReactNo
   const navSize = collapsed ? "w-full px-4 md:w-12 md:justify-center md:px-0" : "w-full px-4 md:w-56";
 
   return (
-    <div className="min-h-screen bg-[var(--shell-bg)] text-[var(--shell-text)] transition-colors duration-200" data-sidebar={collapsed ? "collapsed" : "expanded"} data-theme={theme}>
+    <div className="min-h-screen bg-[var(--shell-bg)] text-[var(--shell-text)] transition-colors duration-200 md:h-screen md:overflow-hidden" data-sidebar={collapsed ? "collapsed" : "expanded"} data-theme={theme}>
       <aside
         className={`fixed inset-y-4 left-4 z-50 hidden flex-col rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] text-[var(--shell-text)] shadow-[var(--shell-card-shadow)] transition-[width,padding,background-color,color,border-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:flex ${collapsed ? "md:w-24 md:px-6 md:py-8" : "md:w-[272px] md:p-8"}`}
         data-collapsed={collapsed}
       >
-        <div className={`flex h-8 items-center ${collapsed ? "justify-between md:justify-center" : "justify-between"}`}>
+        <div className={`flex h-11 items-center ${collapsed ? "justify-center" : "justify-between"}`}>
           <Link className="flex items-center gap-3 overflow-hidden transition-opacity hover:opacity-80" href="/dashboard">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#53b6e0] text-sm font-black text-white">F</span>
             <span
@@ -106,7 +109,7 @@ export function DashboardShell({ children, userRole }: { children: React.ReactNo
           </Link>
           <button
             aria-label="Toggle sidebar"
-            className={`hidden h-8 w-8 shrink-0 items-center justify-center rounded-md text-[var(--shell-muted)] transition-colors hover:bg-[var(--shell-hover)] hover:text-[#53b6e0] md:flex ${collapsed ? "absolute left-8 top-20" : ""}`}
+            className={`hidden h-11 w-12 shrink-0 items-center justify-center rounded-xl text-[var(--shell-muted)] transition-colors hover:bg-[var(--shell-hover)] hover:text-[#53b6e0] md:flex ${collapsed ? "md:hidden" : ""}`}
             onClick={toggleCollapsed}
             type="button"
           >
@@ -120,9 +123,35 @@ export function DashboardShell({ children, userRole }: { children: React.ReactNo
               collapsed ? "translate-x-0 opacity-100 md:-translate-x-2 md:opacity-0" : "translate-x-0 opacity-100"
             }`}
           >
-            Menu
+            {isSettingsMenu ? "Settings" : "Menu"}
           </p>
           <nav className="grid gap-1">
+            {isSettingsMenu ? (
+              <Link
+                className={`${navBase} ${navSize} text-[var(--shell-muted)] hover:bg-[var(--shell-hover)] hover:text-[var(--shell-text)]`}
+                href="/dashboard"
+                title={collapsed ? "Back to dashboard" : undefined}
+              >
+                <ChevronLeft className="h-5 w-5 shrink-0" />
+                <span
+                  className={`overflow-hidden whitespace-nowrap transition-[width,opacity,transform] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                    collapsed ? "w-36 translate-x-0 opacity-100 md:w-0 md:-translate-x-2 md:opacity-0" : "w-36 translate-x-0 opacity-100"
+                  }`}
+                >
+                  Back to dashboard
+                </span>
+              </Link>
+            ) : null}
+            {collapsed ? (
+              <button
+                aria-label="Expand sidebar"
+                className={`${navBase} ${navSize} text-[var(--shell-muted)] hover:bg-[var(--shell-hover)] hover:text-[#53b6e0]`}
+                onClick={toggleCollapsed}
+                type="button"
+              >
+                <ChevronRight className="h-5 w-5 shrink-0" />
+              </button>
+            ) : null}
             {navItems.map((item) => {
               const Icon = navIcons[item.href as keyof typeof navIcons];
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -173,7 +202,7 @@ export function DashboardShell({ children, userRole }: { children: React.ReactNo
       </aside>
 
       <header
-        className="fixed inset-x-4 top-4 z-30 flex h-16 items-center justify-between rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] px-6 text-[var(--shell-text)] shadow-[var(--shell-card-shadow)] transition-[margin-left,background-color,color,border-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:sticky md:inset-x-auto md:ml-[calc(var(--sidebar-width)+32px)] md:mr-4"
+        className="fixed inset-x-4 top-4 z-30 flex h-16 items-center justify-between rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] px-6 text-[var(--shell-text)] shadow-[var(--shell-card-shadow)] transition-[left,background-color,color,border-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:left-[calc(var(--sidebar-width)+32px)] md:right-4"
         style={{ "--sidebar-width": `${sidebarWidth}px` } as React.CSSProperties}
       >
         <div className="min-w-0 md:hidden">
@@ -208,10 +237,10 @@ export function DashboardShell({ children, userRole }: { children: React.ReactNo
       </header>
 
       <main
-        className="ml-4 mr-4 mt-24 pb-28 transition-[margin-left] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:ml-[calc(var(--sidebar-width)+32px)] md:mt-4 md:pb-8"
+        className="ml-4 mr-4 mt-24 pb-28 transition-[left] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] md:fixed md:bottom-4 md:left-[calc(var(--sidebar-width)+32px)] md:right-4 md:top-24 md:m-0 md:overflow-y-auto md:pb-0"
         style={{ "--sidebar-width": `${sidebarWidth}px` } as React.CSSProperties}
       >
-        <div className="rounded-2xl border border-[var(--shell-border)] bg-[var(--color-bg)] p-4 text-[var(--color-text)] shadow-[var(--shell-card-shadow)] transition-colors duration-200 md:p-6">{children}</div>
+        <div className="rounded-2xl border border-[var(--shell-border)] bg-[var(--color-bg)] p-4 text-[var(--color-text)] shadow-[var(--shell-card-shadow)] transition-colors duration-200 md:min-h-full md:p-6">{children}</div>
       </main>
 
       <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-6 rounded-2xl border border-[var(--shell-border)] bg-[var(--shell-panel)] p-2 text-[var(--shell-muted)] shadow-[var(--shell-card-shadow)] md:hidden">
