@@ -17,6 +17,8 @@ model User {
   categories          Category[]
   transactions        Transaction[]
   wallets             Wallet[]
+  assets              Asset[]
+  assetTransactions   AssetTransaction[]
   subscription        Subscription?
   familyMemberships   FamilyMember[]
   createdFamilies     Family[]      @relation("FamilyCreator")
@@ -109,6 +111,7 @@ model Family {
 
   members      FamilyMember[]
   transactions Transaction[]
+  assets       Asset[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -132,6 +135,67 @@ model FamilyMember {
   @@unique([familyId, userId])
   @@index([userId])
   @@map("family_members")
+}
+
+model Asset {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  familyId String?
+  family   Family? @relation(fields: [familyId], references: [id], onDelete: SetNull)
+
+  name          String
+  symbol        String?
+  type          AssetType
+  valuationMode AssetValuationMode @default(MANUAL_VALUE)
+
+  quantity     Decimal? @db.Decimal(24, 8)
+  averageCost  Decimal? @db.Decimal(24, 8)
+  currentPrice Decimal? @db.Decimal(24, 8)
+
+  costBasis    Decimal @default(0) @db.Decimal(14, 2)
+  currentValue Decimal @default(0) @db.Decimal(14, 2)
+
+  platform String?
+  notes    String?
+
+  transactions AssetTransaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([familyId])
+  @@index([type])
+  @@map("assets")
+}
+
+model AssetTransaction {
+  id      String @id @default(cuid())
+  assetId String
+  asset   Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type AssetTransactionType
+
+  quantity Decimal? @db.Decimal(24, 8)
+  price    Decimal? @db.Decimal(24, 8)
+  amount   Decimal  @db.Decimal(14, 2)
+
+  date  DateTime
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([assetId])
+  @@index([userId])
+  @@index([type])
+  @@index([date])
+  @@map("asset_transactions")
 }
 
 model Subscription {
@@ -169,6 +233,36 @@ enum FamilyRole {
 enum FamilyTransactionMode {
   AUTO_FAMILY
   ALLOW_PERSONAL
+}
+
+enum AssetType {
+  STOCK
+  MONEY_MARKET_MUTUAL_FUND
+  EQUITY_MUTUAL_FUND
+  FIXED_INCOME_MUTUAL_FUND
+  BALANCED_MUTUAL_FUND
+  CRYPTO
+  DEPOSIT
+  DIGITAL_BANK
+  GOLD
+  BOND
+  OTHER
+}
+
+enum AssetValuationMode {
+  MANUAL_VALUE
+  QUANTITY_PRICE
+}
+
+enum AssetTransactionType {
+  BUY
+  SELL
+  TOP_UP
+  WITHDRAW
+  DIVIDEND
+  INTEREST
+  FEE
+  ADJUSTMENT
 }
 
 enum PlanType {

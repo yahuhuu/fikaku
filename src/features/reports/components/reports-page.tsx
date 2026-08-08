@@ -1,3 +1,8 @@
+import { AssetAllocationCard } from "@/features/assets/components/asset-allocation-card";
+import { AssetSummaryCards } from "@/features/assets/components/asset-summary-cards";
+import { getVisibleAssetsData } from "@/features/assets/queries/get-assets.query";
+import { calculateAssetAllocation } from "@/features/assets/services/asset-allocation.service";
+import { calculateAssetSummary } from "@/features/assets/services/asset-summary.service";
 import { getFamilies } from "@/features/families/queries/get-families.query";
 import { CategoryBreakdown } from "./category-breakdown";
 import { CashflowTable } from "./cashflow-table";
@@ -17,7 +22,13 @@ export async function ReportsPage({ userId, searchParams }: ReportsPageProps) {
   const selectedMonth = searchParams?.month ?? new Date().toISOString().slice(0, 7);
   const families = await getFamilies(userId);
   const selectedFamilyId = families.some((family) => family.id === searchParams?.familyId) ? searchParams?.familyId : undefined;
-  const report = await getMonthlyReport({ userId, month: selectedMonth, familyId: selectedFamilyId });
+  const [report, assetData] = await Promise.all([
+    getMonthlyReport({ userId, month: selectedMonth, familyId: selectedFamilyId }),
+    getVisibleAssetsData(userId),
+  ]);
+  const reportAssets = selectedFamilyId ? assetData.assets.filter((asset) => asset.familyId === selectedFamilyId) : assetData.assets;
+  const assetSummary = calculateAssetSummary(reportAssets);
+  const assetAllocation = calculateAssetAllocation(reportAssets);
 
   return (
     <main className="space-y-6">
@@ -39,6 +50,9 @@ export async function ReportsPage({ userId, searchParams }: ReportsPageProps) {
 
       <ReportSummaryCards summary={report.summary} />
       <ReportCharts expenseByCategory={report.expenseByCategory} dailyCashflow={report.dailyCashflow} />
+
+      <AssetSummaryCards summary={assetSummary} />
+      <AssetAllocationCard allocation={assetAllocation} />
 
       <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <CategoryBreakdown items={report.expenseByCategory} />

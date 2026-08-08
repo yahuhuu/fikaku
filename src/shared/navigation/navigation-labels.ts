@@ -3,6 +3,7 @@ const navigationTitles = [
   { prefix: "/transactions", title: "Transactions" },
   { prefix: "/categories", title: "Categories" },
   { prefix: "/wallets", title: "Wallets" },
+  { prefix: "/assets", title: "Assets" },
   { prefix: "/families", title: "Families" },
   { prefix: "/reports", title: "Reports" },
   { prefix: "/settings", title: "Settings" },

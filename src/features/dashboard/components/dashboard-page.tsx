@@ -1,3 +1,5 @@
+import { AssetAllocationCard } from "@/features/assets/components/asset-allocation-card";
+import { AssetSummaryCards } from "@/features/assets/components/asset-summary-cards";
 import { DashboardCharts } from "./dashboard-charts";
 import { RecentTransactions } from "./recent-transactions";
 import { SummaryCards } from "./summary-cards";
@@ -39,6 +41,8 @@ export async function DashboardPage({ userId }: DashboardPageProps) {
       </div>
 
       <SummaryCards {...summary.summary} />
+      <AssetSummaryCards summary={summary.assets.summary} />
+      <AssetAllocationCard allocation={summary.assets.allocation} />
       <DashboardCharts dailyCashflow={summary.dailyCashflow} expenseByCategory={summary.expenseByCategory} />
       <RecentTransactions transactions={summary.recentTransactions} />
     </main>

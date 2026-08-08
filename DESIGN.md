@@ -619,6 +619,23 @@ Mobile layout should feel like a first-class workspace, not only a scaled deskto
 - Family page separates settings, add-member form, and danger-zone delete action.
 - Transaction amount inputs use a client-side Rupiah mask (`Rp. 1.000.000`) while submitting plain numeric values.
 
+### Assets Feature Decisions
+
+- Assets live in the main menu as a core finance page.
+- Assets can be personal (`familyId` null) or family-owned (`familyId` set).
+- Asset valuation supports `MANUAL_VALUE` and `QUANTITY_PRICE`.
+- `QUANTITY_PRICE` assets store quantity/currentPrice and derive currentValue as `quantity * currentPrice`.
+- Assets have optional ticker/symbol for saham/kripto and optional platform for broker/bank/app.
+- Family asset edit policy: every family member can edit asset details/current price.
+- Family asset delete policy: asset creator or family owner can delete.
+- Phase 1 includes schema, repository, service tests, create/edit/delete, summary, menu, and `/assets` page.
+- Phase 2 adds asset transactions for `BUY`, `SELL`, `TOP_UP`, `WITHDRAW`, `DIVIDEND`, `INTEREST`, `FEE`, and `ADJUSTMENT`.
+- `BUY` increases quantity and costBasis, recalculates averageCost, and keeps currentValue derived from currentPrice.
+- `SELL` decreases quantity and removes costBasis using averageCost.
+- Manual-value `TOP_UP`/`WITHDRAW` adjust costBasis and currentValue directly.
+- Phase 3 adds asset allocation and net-worth cards to Dashboard and Reports.
+- Reports show asset summary/allocation for all visible assets, or only the selected family assets when a family filter is active.
+
 ### Mobile Bottom Navigation
 
 Use a fixed bottom navigation on mobile only:
@@ -627,7 +644,7 @@ Use a fixed bottom navigation on mobile only:
 Home
 Transaksi
 Wallet
-Family
+Assets
 Reports
 Settings
 ```

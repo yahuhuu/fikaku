@@ -3,7 +3,7 @@ import { getSettingsNavItems, getShellNavItems, isSettingsMenuPath } from "./she
 
 describe("getShellNavItems", () => {
   it("keeps the main menu focused on primary finance pages", () => {
-    expect(getShellNavItems("USER").map((item) => item.href)).toEqual(["/dashboard", "/transactions", "/wallets", "/reports"]);
+    expect(getShellNavItems("USER").map((item) => item.href)).toEqual(["/dashboard", "/transactions", "/wallets", "/assets", "/reports"]);
   });
 
   it("keeps categories and families inside the settings menu", () => {

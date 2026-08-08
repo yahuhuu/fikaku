@@ -10,6 +10,7 @@ export const mainShellNavItems = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Transactions", href: "/transactions" },
   { label: "Wallets", href: "/wallets" },
+  { label: "Assets", href: "/assets" },
   { label: "Reports", href: "/reports" },
 ] satisfies ShellNavItem[];
 

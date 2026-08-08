@@ -6,6 +6,7 @@ const protectedPrefixes = [
   "/transactions",
   "/categories",
   "/wallets",
+  "/assets",
   "/families",
   "/reports",
   "/settings",
@@ -33,5 +34,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/transactions/:path*", "/categories/:path*", "/wallets/:path*", "/families/:path*", "/reports/:path*", "/settings/:path*", "/subscriptions/:path*"],
+  matcher: ["/dashboard/:path*", "/transactions/:path*", "/categories/:path*", "/wallets/:path*", "/assets/:path*", "/families/:path*", "/reports/:path*", "/settings/:path*", "/subscriptions/:path*"],
 };

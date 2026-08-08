@@ -33,6 +33,7 @@ const navIcons = {
   "/transactions": CreditCard,
   "/categories": Tags,
   "/wallets": Wallet,
+  "/assets": PieChart,
   "/families": UsersRound,
   "/settings": Settings,
   "/subscriptions": CreditCard,
@@ -45,7 +46,7 @@ const mobileBottomNavItems = [
   { label: "Home", href: "/dashboard", icon: LayoutDashboard },
   { label: "Transaksi", href: "/transactions", icon: CreditCard },
   { label: "Wallet", href: "/wallets", icon: Wallet },
-  { label: "Family", href: "/families", icon: UsersRound },
+  { label: "Assets", href: "/assets", icon: PieChart },
   { label: "Reports", href: "/reports", icon: PieChart },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
